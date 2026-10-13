@@ -1,0 +1,65 @@
+# Secrets and local configuration
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/.env
+**/.env.*
+**/secrets.json
+**/secrets.*.json
+**/*.user
+**/*.suo
+
+# Keep appsettings templates only after reviewing and sanitizing them
+/backend/src/BankingBrain.Api/appsettings.json
+
+# Build outputs
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+**/artifacts/
+
+# Generated snapshots and runtime storage
+**/repository-snapshots/
+**/storage/
+**/logs/
+**/*.log
+
+# Local databases and backups
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*.bak
+**/*.mdf
+**/*.ldf
+
+# IDE and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Dependencies and test/build output
+**/node_modules/
+**/TestResults/
+**/coverage/
+**/.coverage
+**/.vs/
+
+# Certificates and private keys
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.key
+**/*.crt
+**/*.cer
+**/*.p8
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Local Claude Code settings
+**/.claude/settings.local.json
+
+# Local Claude Code settings
+**/.claude/settings.local.json

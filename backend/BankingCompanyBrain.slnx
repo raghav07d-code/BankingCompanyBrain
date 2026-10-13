@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BankingBrain.Api/BankingBrain.Api.csproj" />
+    <Project Path="src/BankingBrain.Application/BankingBrain.Application.csproj" />
+    <Project Path="src/BankingBrain.Contracts/BankingBrain.Contracts.csproj" />
+    <Project Path="src/BankingBrain.Domain/BankingBrain.Domain.csproj" />
+    <Project Path="src/BankingBrain.Infrastructure/BankingBrain.Infrastructure.csproj" />
+    <Project Path="src/BankingBrain.Shared/BankingBrain.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BankingBrain.IntegrationTests/BankingBrain.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

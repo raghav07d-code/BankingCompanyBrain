@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    The default SDK glob excludes only this project's own bin/obj. Source connectors
+    (Connectors:FileSystem:AllowedRoots/Connectors:Git:AllowedRoots) and the immutable
+    repository-snapshot writer (Connectors:Git:SnapshotRootPath) all live under this
+    project's directory by convention ("sources", "repositories",
+    "repository-snapshots") and routinely contain real, compilable .cs content -
+    including, for a Git-backed knowledge source whose fixture happens to be a copy of
+    this very backend, files that redeclare the same types this project already
+    defines. Without excluding them explicitly, any such content silently becomes part
+    of this project's own compilation and fails the build with duplicate-type errors.
+  -->
+  <ItemGroup>
+    <Compile Remove="sources/**" />
+    <Compile Remove="repositories/**" />
+    <Compile Remove="repository-snapshots/**" />
+    <Compile Remove="storage/**" />
+    <Content Remove="sources/**;repositories/**;repository-snapshots/**;storage/**" />
+    <None Remove="sources/**;repositories/**;repository-snapshots/**;storage/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankingBrain.Application\BankingBrain.Application.csproj" />
+    <ProjectReference Include="..\BankingBrain.Infrastructure\BankingBrain.Infrastructure.csproj" />
+    <ProjectReference Include="..\BankingBrain.Shared\BankingBrain.Shared.csproj" />
+    <ProjectReference Include="..\BankingBrain.Contracts\BankingBrain.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

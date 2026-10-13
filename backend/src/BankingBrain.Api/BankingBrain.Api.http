@@ -1,0 +1,6 @@
+@BankingBrain.Api_HostAddress = http://localhost:5206
+
+GET {{BankingBrain.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

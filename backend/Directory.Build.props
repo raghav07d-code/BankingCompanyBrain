@@ -1,0 +1,37 @@
+<Project>
+
+  <PropertyGroup>
+
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+
+    <!-- C# Language -->
+    <LangVersion>latest</LangVersion>
+
+    <!-- Nullable -->
+    <Nullable>enable</Nullable>
+
+    <!-- Global Usings -->
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Documentation -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <!-- Deterministic Build -->
+    <Deterministic>true</Deterministic>
+
+    <!-- Compiler -->
+    <AnalysisLevel>latest</AnalysisLevel>
+
+    <!-- Warnings -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!-- Code Analysis -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+
+    <!-- Build -->
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+
+  </PropertyGroup>
+
+</Project>

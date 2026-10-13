@@ -1,0 +1,202 @@
+{
+  "fixtureName": "workflow-benchmark",
+  "description": "Hand-authored ground truth for the synthetic Loan Approval fixture, derived solely by reading the fixture source under benchmarks/loan-approval/fixture-src. Never generated from, or adjusted to match, engine output.",
+  "entities": [
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.ApproveLoanHandler" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.RejectLoanHandler" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.SubmitLoanApplicationHandler" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.NotifyApplicantHandler" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.LoanApplicationRepository" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.ApprovalDecisionRepository" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.AuditRepository" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.NotificationRepository" },
+    { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.LoanApprovalPolicy" },
+    { "entityType": "SqlTable", "canonicalName": "dbo.Applicants" },
+    { "entityType": "SqlTable", "canonicalName": "dbo.LoanApplications" },
+    { "entityType": "SqlTable", "canonicalName": "dbo.ApprovalDecisions" },
+    { "entityType": "SqlTable", "canonicalName": "dbo.AuditHistory" },
+    { "entityType": "SqlView", "canonicalName": "dbo.vw_LoanApplicationSummary" },
+    { "entityType": "SqlProcedure", "canonicalName": "dbo.sp_ApproveLoanApplication" },
+    { "entityType": "SqlProcedure", "canonicalName": "dbo.sp_RecordAuditEntry" },
+    { "entityType": "SqlProcedure", "canonicalName": "dbo.sp_RejectLoanApplication" }
+  ],
+  "relationships": [
+    {
+      "id": "approve_calls_policy",
+      "predicate_class": "CodeCallChain",
+      "subjectCanonicalNameLike": "%ApproveLoanHandler.Handle%",
+      "objectCanonicalNameLike": "%LoanApprovalPolicy.IsWithinApprovalLimit%",
+      "evidenceFile": "LoanCommands.cs",
+      "evidenceGrepPattern": "LoanApprovalPolicy.IsWithinApprovalLimit(request.Amount)"
+    },
+    {
+      "id": "approve_calls_update_status",
+      "predicate_class": "CodeCallChain",
+      "subjectCanonicalNameLike": "%ApproveLoanHandler.Handle%",
+      "objectCanonicalNameLike": "%LoanApplicationRepository.UpdateStatus%",
+      "evidenceFile": "LoanCommands.cs",
+      "evidenceGrepPattern": "_loanRepository.UpdateStatus(request.LoanApplicationId, \"Approved\")"
+    },
+    {
+      "id": "approve_calls_approval_add",
+      "predicate_class": "CodeCallChain",
+      "subjectCanonicalNameLike": "%ApproveLoanHandler.Handle%",
+      "objectCanonicalNameLike": "%ApprovalDecisionRepository.Add%",
+      "evidenceFile": "LoanCommands.cs",
+      "evidenceGrepPattern": "_approvalRepository.Add(new ApprovalDecision"
+    },
+    {
+      "id": "update_status_accesses_loanapplications",
+      "predicate_class": "MethodAccessesTable",
+      "subjectCanonicalNameLike": "%LoanApplicationRepository.UpdateStatus%",
+      "objectCanonicalNameLike": "%LoanApplications%",
+      "evidenceFile": "LoanRepositories.cs",
+      "evidenceGrepPattern": "_db.LoanApplications.Add(new LoanApplication { Id = id, Status = status })"
+    },
+    {
+      "id": "approval_add_accesses_approvaldecisions",
+      "predicate_class": "MethodAccessesTable",
+      "subjectCanonicalNameLike": "%ApprovalDecisionRepository.Add%",
+      "objectCanonicalNameLike": "%ApprovalDecisions%",
+      "evidenceFile": "LoanRepositories.cs",
+      "evidenceGrepPattern": "_db.ApprovalDecisions.Add(decision)"
+    },
+    {
+      "id": "audit_add_accesses_auditentries",
+      "predicate_class": "MethodAccessesTable",
+      "subjectCanonicalNameLike": "%AuditRepository.Add%",
+      "objectCanonicalNameLike": "%AuditEntries%",
+      "evidenceFile": "LoanRepositories.cs",
+      "evidenceGrepPattern": "_db.AuditEntries.Add(entry)"
+    },
+    {
+      "id": "notification_add_unresolved",
+      "predicate_class": "UnresolvedReference",
+      "subjectCanonicalNameLike": "%NotificationRepository.Add%",
+      "objectCanonicalNameLike": "%Notification%",
+      "evidenceFile": "LoanRepositories.cs",
+      "evidenceGrepPattern": "_db.Notifications.Add(notification)",
+      "reason": "Notification DbSet has no IEntityTypeConfiguration/ToTable mapping anywhere in the fixture"
+    },
+    {
+      "id": "sp_approve_writes_loanapplications",
+      "predicate_class": "SqlDependency",
+      "predicate": "PROCEDURE_WRITES_TABLE",
+      "subjectCanonicalNameLike": "%sp_ApproveLoanApplication%",
+      "objectCanonicalNameLike": "%LoanApplications%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "SET Status = 'Approved'"
+    },
+    {
+      "id": "sp_approve_writes_approvaldecisions",
+      "predicate_class": "SqlDependency",
+      "predicate": "PROCEDURE_WRITES_TABLE",
+      "subjectCanonicalNameLike": "%sp_ApproveLoanApplication%",
+      "objectCanonicalNameLike": "%ApprovalDecisions%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "INSERT INTO dbo.ApprovalDecisions"
+    },
+    {
+      "id": "sp_approve_calls_sp_recordaudit",
+      "predicate_class": "SqlDependency",
+      "predicate": "PROCEDURE_CALLS_PROCEDURE",
+      "subjectCanonicalNameLike": "%sp_ApproveLoanApplication%",
+      "objectCanonicalNameLike": "%sp_RecordAuditEntry%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "EXEC dbo.sp_RecordAuditEntry"
+    },
+    {
+      "id": "sp_recordaudit_writes_audithistory",
+      "predicate_class": "SqlDependency",
+      "predicate": "PROCEDURE_WRITES_TABLE",
+      "subjectCanonicalNameLike": "%sp_RecordAuditEntry%",
+      "objectCanonicalNameLike": "%AuditHistory%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "INSERT INTO dbo.AuditHistory"
+    },
+    {
+      "id": "sp_reject_writes_loanapplications",
+      "predicate_class": "SqlDependency",
+      "predicate": "PROCEDURE_WRITES_TABLE",
+      "subjectCanonicalNameLike": "%sp_RejectLoanApplication%",
+      "objectCanonicalNameLike": "%LoanApplications%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "SET Status = 'Rejected'"
+    },
+    {
+      "id": "view_summary_derives_loanapplications",
+      "predicate_class": "SqlDependency",
+      "predicate": "VIEW_DERIVES_FROM_TABLE",
+      "subjectCanonicalNameLike": "%vw_LoanApplicationSummary%",
+      "objectCanonicalNameLike": "%LoanApplications%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "FROM dbo.LoanApplications la"
+    },
+    {
+      "id": "view_summary_derives_applicants",
+      "predicate_class": "SqlDependency",
+      "predicate": "VIEW_DERIVES_FROM_TABLE",
+      "subjectCanonicalNameLike": "%vw_LoanApplicationSummary%",
+      "objectCanonicalNameLike": "%Applicants%",
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "JOIN dbo.Applicants a"
+    },
+    {
+      "id": "sp_reject_dynamic_sql_unresolved",
+      "predicate_class": "UnresolvedReference",
+      "subjectCanonicalNameLike": "%sp_RejectLoanApplication%",
+      "objectCanonicalNameLike": null,
+      "evidenceFile": "schema.sql",
+      "evidenceGrepPattern": "EXEC(@NotifyProcedureName)",
+      "reason": "Dynamic SQL EXEC of a variable procedure name cannot be statically resolved"
+    }
+  ],
+  "apiEndpoints": [
+    { "route": "POST /api/loans/submit", "handler": "LoanApprovalBenchmark.SubmitLoanApplicationHandler.Handle", "evidenceFile": "LoanEndpoints.cs", "evidenceGrepPattern": "MapPost(\"/api/loans/submit\"" },
+    { "route": "GET /api/loans/{id}", "handler": "LoanApprovalBenchmark.GetLoanApplicationHandler.Handle", "evidenceFile": "LoanEndpoints.cs", "evidenceGrepPattern": "MapGet(\"/api/loans/{id}\"" },
+    { "route": "POST /api/loans/{id}/approve", "handler": "LoanApprovalBenchmark.ApproveLoanHandler.Handle", "evidenceFile": "LoanEndpoints.cs", "evidenceGrepPattern": "MapPost(\"/api/loans/{id}/approve\"" },
+    { "route": "POST /api/loans/{id}/reject", "handler": "LoanApprovalBenchmark.RejectLoanHandler.Handle", "evidenceFile": "LoanEndpoints.cs", "evidenceGrepPattern": "MapPost(\"/api/loans/{id}/reject\"" },
+    { "route": "POST /api/loans/{id}/notify", "handler": "LoanApprovalBenchmark.NotifyApplicantHandler.Handle", "evidenceFile": "LoanEndpoints.cs", "evidenceGrepPattern": "MapPost(\"/api/loans/{id}/notify\"" }
+  ],
+  "impactAnalysis": {
+    "approvalLimitChange": {
+      "description": "If LoanApprovalPolicy.IsWithinApprovalLimit's behavior changes, which API endpoints could be affected?",
+      "startMethodCanonicalNameLike": "%LoanApprovalPolicy.IsWithinApprovalLimit%",
+      "expectedAffectedEndpointRoutes": ["POST /api/loans/{id}/approve"],
+      "excludedEndpointRoutes": ["POST /api/loans/submit", "GET /api/loans/{id}", "POST /api/loans/{id}/reject", "POST /api/loans/{id}/notify"]
+    },
+    "loanApplicationsTableChange": {
+      "description": "If dbo.LoanApplications changes shape, what could be affected?",
+      "startTableCanonicalName": "dbo.LoanApplications",
+      "expectedImpactedCanonicalNames": [
+        "dbo.vw_LoanApplicationSummary",
+        "dbo.sp_ApproveLoanApplication",
+        "dbo.sp_RejectLoanApplication"
+      ]
+    },
+    "approvalCodePath": {
+      "description": "Which code path handles loan approval, reachable from the approve endpoint?",
+      "startEndpointRoute": "POST /api/loans/{id}/approve",
+      "expectedReachableCanonicalNamesLike": [
+        "%ApproveLoanHandler.Handle%",
+        "%LoanApprovalPolicy.IsWithinApprovalLimit%",
+        "%LoanApplicationRepository.UpdateStatus%",
+        "%ApprovalDecisionRepository.Add%"
+      ]
+    }
+  },
+  "revisions": {
+    "v1_baseline": {
+      "description": "Initial commit of all fixture files as written under fixture-src/."
+    },
+    "v2_addAndModify": {
+      "description": "Adds LoanBenchmarkMarkerAdded.cs (new class LoanBenchmarkMarkerAdded) and appends class LoanBenchmarkMarkerAddedChanged to the end of LoanApprovalPolicy.cs, in one commit.",
+      "addedEntity": { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.LoanBenchmarkMarkerAdded" },
+      "changedFileAddedEntity": { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.LoanBenchmarkMarkerAddedChanged" }
+    },
+    "v3_delete": {
+      "description": "A dedicated marker file LoanBenchmarkMarkerToDelete.cs (class LoanBenchmarkMarkerToDelete) is added in the v2 commit, then deleted in a subsequent commit. Its entity must remain queryable historically (by exact id/provenance) but must not resolve as current.",
+      "deletedEntity": { "entityType": "Class", "canonicalName": "LoanApprovalBenchmark.LoanBenchmarkMarkerToDelete" }
+    }
+  }
+}

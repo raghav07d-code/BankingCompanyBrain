@@ -1,0 +1,50 @@
+{
+  "runId": "20261013T003223",
+  "apiBase": "http://localhost:5207",
+  "dbName": "BankingBrainPerfDb",
+  "workspaceId": "f036a3e1-cecd-4db9-b7de-8a9e07c62f92",
+  "summary": {
+    "passed": 18,
+    "failed": 42
+  },
+  "entityCoverage": {
+    "found": 6,
+    "total": 17,
+    "coverage": ".3529"
+  },
+  "relationshipScoring": {
+    "truePositives": 4,
+    "falsePositives": 0,
+    "falseNegatives": 11,
+    "manifestTotal": 15,
+    "precision": "1.0000",
+    "recall": ".2666",
+    "f1": ".4209"
+  },
+  "evidenceCorrectness": {
+    "correct": 4,
+    "checked": 15,
+    "accuracy": ".2666"
+  },
+  "impactAnalysis": {
+    "approvalCodePathRecall": "undefined",
+    "approvalLimitAffectedEndpointsPrecision": "undefined",
+    "loanApplicationsTableImpactRecall": "undefined",
+    "loanApplicationsTableImpactPrecision": "undefined"
+  },
+  "unresolvedReferenceHandling": {
+    "found": 0,
+    "total": 2
+  },
+  "latencyMs": {
+    "p50": "unsupported",
+    "p95": "unsupported",
+    "p99": "unsupported"
+  },
+  "comparativeEvaluation": {
+    "approachA_chunkRetrieval": 0,
+    "approachB_graphTraversal": 0,
+    "approachC_claimsEvidenceGraph": 0,
+    "outOf": 4
+  }
+}
